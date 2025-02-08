@@ -1,5 +1,4 @@
 'use client'
-import { GetServerSideProps } from 'next';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useDispatch } from 'react-redux';
@@ -67,29 +66,23 @@ async function getData(slug: string) {
   return { product, relatedProducts };
 }
 
-// Ensuring 'params' is correctly typed
-export const getServerSideProps: GetServerSideProps<ProductPageProps> = async ({ params }) => {
-  // Ensure 'slug' is a string
-  const slug = params?.slug as string; 
-
-  if (!slug) {
-    return { notFound: true };
-  }
-
-  const { product, relatedProducts } = await getData(slug) || { product: null, relatedProducts: [] };
-
-  return {
-    props: {
-      product,
-      relatedProducts,
-    },
-  };
-};
-
-const ProductListing = ({ product, relatedProducts }: ProductPageProps) => {
+const ProductListing = ({ params }: { params: { slug: string } }) => {
+  const { slug } = params;
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
   const dispatch = useDispatch();
   const { addToWishlist } = useWishlist();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+
+  // Fetch data on server side (App Router)
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const { product, relatedProducts } = await getData(slug) || { product: null, relatedProducts: [] };
+      setProduct(product);
+      setRelatedProducts(relatedProducts);
+    };
+    fetchData();
+  }, [slug]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -229,3 +222,4 @@ const ProductListing = ({ product, relatedProducts }: ProductPageProps) => {
 };
 
 export default ProductListing;
+
