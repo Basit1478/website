@@ -1,7 +1,3 @@
 {
-  "extends": ["next", "next/core-web-vitals"],
-  "rules": {
-    "no-unused-vars": "off", // Disable "no-unused-vars" rule
-    "react/jsx-no-target-blank": "off" // Disable this rule if it's causing issues
-  }
+  "extends": ["next/core-web-vitals", "next/typescript"]
 }
