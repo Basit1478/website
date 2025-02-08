@@ -2,11 +2,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useDispatch } from 'react-redux';
-import { useWishlist } from '@/app/context/WishlistContext';
+import { useWishlist } from '@/app/context/WishlistContext1';
 import { Loader } from 'lucide-react';
 import { addToCart } from '@/app/redux/cartSlice';
 import { client } from '@/sanity/lib/client';
-import Brand from '@/app/components/brand';
+import Brand from '@/components/brand';
 
 type Product = {
   _id: number;
