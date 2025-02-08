@@ -1,8 +1,5 @@
 import React from 'react'
-import { CiDeliveryTruck } from "react-icons/ci";
-import { IoCheckmarkCircleOutline } from "react-icons/io5";
-import { IoCardOutline } from "react-icons/io5";
-import { LuSprout } from "react-icons/lu";
+
 const Features = () => {
   return (
     
