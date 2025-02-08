@@ -1,5 +1,5 @@
-'use client';
-import React, { useState, useEffect, useMemo } from 'react';
+import { GetServerSideProps } from 'next';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { useWishlist } from '@/app/context/WishlistContext1';
@@ -25,6 +25,11 @@ type Product = {
   };
   tags: string[];
   features: string[];
+};
+
+type ProductPageProps = {
+  product: Product | null;
+  relatedProducts: Product[];
 };
 
 async function getData(slug: string) {
@@ -61,26 +66,29 @@ async function getData(slug: string) {
   return { product, relatedProducts };
 }
 
-const ProductListing = ({ params }: { params: { slug: string } }) => {
-  const [currentSlug, setCurrentSlug] = useState(params.slug);
-  const [product, setProduct] = useState<Product | null>(null);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+// Ensuring 'params' is correctly typed
+export const getServerSideProps: GetServerSideProps<ProductPageProps> = async ({ params }) => {
+  // Ensure 'slug' is a string
+  const slug = params?.slug as string; 
+
+  if (!slug) {
+    return { notFound: true };
+  }
+
+  const { product, relatedProducts } = await getData(slug) || { product: null, relatedProducts: [] };
+
+  return {
+    props: {
+      product,
+      relatedProducts,
+    },
+  };
+};
+
+const ProductListing = ({ product, relatedProducts }: ProductPageProps) => {
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
   const dispatch = useDispatch();
   const { addToWishlist } = useWishlist();
-
-  // Memoized fetchData to avoid unnecessary re-fetches
-  const fetchData = useMemo(() => async (slug: string) => {
-    const data = await getData(slug);
-    if (data) {
-      setProduct(data.product);
-      setRelatedProducts(data.relatedProducts);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData(currentSlug);
-  }, [currentSlug, fetchData]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -106,18 +114,10 @@ const ProductListing = ({ params }: { params: { slug: string } }) => {
     setTimeout(() => setPopupMessage(null), 3000);
   };
 
-  useEffect(() => {
-    if (popupMessage) {
-      const timer = setTimeout(() => setPopupMessage(null), 3000);
-      return () => clearTimeout(timer); // Clean up timeout when the component unmounts
-    }
-  }, [popupMessage]);
-
   if (!product) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loader className="animate-spin text-[#2A254B]" size={48} />
-        <p className="text-xl">Product not found</p>
       </div>
     );
   }
@@ -204,7 +204,6 @@ const ProductListing = ({ params }: { params: { slug: string } }) => {
                 <div
                   key={item._id}
                   className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all cursor-pointer transform hover:scale-105"
-                  onClick={() => setCurrentSlug(item.slug)}
                 >
                   <Image
                     src={item.imageUrl}
