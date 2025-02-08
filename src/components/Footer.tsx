@@ -1,11 +1,5 @@
 import React from "react";
-import { FaFacebookSquare } from "react-icons/fa";
-import { FaInstagram } from "react-icons/fa";
-import { FaLinkedin } from "react-icons/fa";
-import { FaSkype } from "react-icons/fa";
-import { FaTwitter } from "react-icons/fa";
-import { FaPinterest } from "react-icons/fa";
-import Link from "next/link";
+
 const Footer: React.FC = () => {
   return (
     <footer className="max-w-[1440px] md:h-[380px] mx-auto bg-[#2A254B] text-white md:pt-10 pt-8 gap-5">
