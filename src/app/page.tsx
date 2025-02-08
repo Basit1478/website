@@ -1,4 +1,4 @@
-"use client";
+
  
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
@@ -8,7 +8,6 @@ import Sign from "@/components/Sign";
 import New from "@/components/New";
 import React from "react";
 
-import { useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "@/components/Footer";
 
