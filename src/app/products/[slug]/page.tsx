@@ -1,7 +1,10 @@
 // Add the 'use client' directive at the top
 'use client';
 
-import React, { useState, useEffect } from 'react';
+// File: app/products/[slug]/page.tsx
+
+import React, { useState } from 'react';
+import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { useWishlist } from '@/app/context/WishlistContext1';
 import { Loader } from 'lucide-react';
@@ -10,7 +13,6 @@ import { client } from '@/sanity/lib/client';
 import Brand from '@/components/brand';
 import NavbarClient from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import Image from 'next/image';
 
 type Product = {
   _id: number;
@@ -30,11 +32,9 @@ type Product = {
 };
 
 type ProductPageProps = {
-  product: Product | null;
-  relatedProducts: Product[];
+  params: { slug: string };
 };
 
-// Fetch product data based on the slug
 async function getData(slug: string) {
   const query = `*[_type == "product" && slug.current == "${slug}"][0]{
     _id,
@@ -69,24 +69,14 @@ async function getData(slug: string) {
   return { product, relatedProducts };
 }
 
-// Page component to handle dynamic routing
-const ProductListing = ({ params }: { params: { slug: string } }) => {
-  const { slug } = params; // Get the 'slug' parameter
+const ProductListing = async ({ params }: ProductPageProps) => {
+  const { slug } = params;
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
   const dispatch = useDispatch();
   const { addToWishlist } = useWishlist();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
-  // Fetch data on page load
-  useEffect(() => {
-    const fetchData = async () => {
-      const { product, relatedProducts } = await getData(slug) || { product: null, relatedProducts: [] };
-      setProduct(product);
-      setRelatedProducts(relatedProducts);
-    };
-    fetchData();
-  }, [slug]);
+  // Fetching data inside the component
+  const { product, relatedProducts } = await getData(slug) || { product: null, relatedProducts: [] };
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -226,3 +216,4 @@ const ProductListing = ({ params }: { params: { slug: string } }) => {
 };
 
 export default ProductListing;
+
