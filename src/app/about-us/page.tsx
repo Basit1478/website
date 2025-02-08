@@ -1,16 +1,10 @@
-'use client'
-import { useState } from "react";
+
 import React from "react";
 
 import NavbarClient from "@/components/Navbar";
 import Features from "@/components/Features";
 import Footer from "@/components/Footer";
-const page = () => {
-   const [isOpen, setIsOpen] = useState(false);
-      
-        const toggleMenu = () => {
-          setIsOpen(!isOpen);
-        };
+const page = () => {                  
   return (
     <div>
        <NavbarClient/>
