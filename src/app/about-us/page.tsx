@@ -1,7 +1,7 @@
 'use client'
 import { useState } from "react";
 import React from "react";
-import Link from "next/link";
+
 import NavbarClient from "@/components/Navbar";
 import Features from "@/components/Features";
 import Footer from "@/components/Footer";
