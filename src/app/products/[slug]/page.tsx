@@ -1,6 +1,7 @@
-'use client'
-import React, { useState } from 'react';
-import Image from 'next/image';
+// Add the 'use client' directive at the top
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useWishlist } from '@/app/context/WishlistContext1';
 import { Loader } from 'lucide-react';
@@ -9,6 +10,7 @@ import { client } from '@/sanity/lib/client';
 import Brand from '@/components/brand';
 import NavbarClient from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Image from 'next/image';
 
 type Product = {
   _id: number;
@@ -32,6 +34,7 @@ type ProductPageProps = {
   relatedProducts: Product[];
 };
 
+// Fetch product data based on the slug
 async function getData(slug: string) {
   const query = `*[_type == "product" && slug.current == "${slug}"][0]{
     _id,
@@ -66,16 +69,17 @@ async function getData(slug: string) {
   return { product, relatedProducts };
 }
 
+// Page component to handle dynamic routing
 const ProductListing = ({ params }: { params: { slug: string } }) => {
-  const { slug } = params;
+  const { slug } = params; // Get the 'slug' parameter
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
   const dispatch = useDispatch();
   const { addToWishlist } = useWishlist();
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
-  // Fetch data on server side (App Router)
-  React.useEffect(() => {
+  // Fetch data on page load
+  useEffect(() => {
     const fetchData = async () => {
       const { product, relatedProducts } = await getData(slug) || { product: null, relatedProducts: [] };
       setProduct(product);
@@ -222,4 +226,3 @@ const ProductListing = ({ params }: { params: { slug: string } }) => {
 };
 
 export default ProductListing;
-
